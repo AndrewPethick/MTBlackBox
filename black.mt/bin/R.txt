@@ -262,7 +262,6 @@ int id homeAsUp 0x7f09000a
 int id icon 0x7f09002a
 int id ifRoom 0x7f090011
 int id image 0x7f090027
-int id item_detail 0x7f09003e
 int id item_detail_container 0x7f09003c
 int id item_list 0x7f09003d
 int id listMode 0x7f090006

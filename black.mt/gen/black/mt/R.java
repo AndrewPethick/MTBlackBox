@@ -1100,7 +1100,6 @@ containing a value of this type.
         public static final int icon=0x7f09002a;
         public static final int ifRoom=0x7f090011;
         public static final int image=0x7f090027;
-        public static final int item_detail=0x7f09003e;
         public static final int item_detail_container=0x7f09003c;
         public static final int item_list=0x7f09003d;
         public static final int listMode=0x7f090006;
