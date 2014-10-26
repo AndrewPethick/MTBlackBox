@@ -59,7 +59,7 @@ public class MTForward {
         Cdouble[] zn = new Cdouble[n];
         for (int i = 0; i < m; ++i) {
             Cdouble a = (Cdouble.DBL_I.times(w[i] * mu * sig[n - 1])).sqrt();
-            System.out.println("a: " + a);
+//            System.out.println("a: " + a);
             zn[n - 1] = (a.neg()).over(sig[n - 1]);
 
             for (int k = n - 2; k >= 0; --k) {
@@ -75,8 +75,8 @@ public class MTForward {
                 phi[i] = atan(zn[0].i / zn[0].r);
 
         }
-        System.out.println("Z: " + zn[0]);
-        System.out.println("Z: " + zn[n-1]);
+//        System.out.println("Z: " + zn[0]);
+//        System.out.println("Z: " + zn[n-1]);
 
     }
 

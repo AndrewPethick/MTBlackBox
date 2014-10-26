@@ -14,16 +14,12 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import sun.rmi.runtime.Log;
 
 public class MTApplication extends BorderPane {
 
@@ -39,6 +35,12 @@ public class MTApplication extends BorderPane {
 	XYChart.Series seriespxy = new XYChart.Series();
 	XYChart.Series seriesryx = new XYChart.Series();
 	XYChart.Series seriespyx = new XYChart.Series();
+	
+	
+	XYChart.Series seriesrxyfwd = new XYChart.Series();
+	XYChart.Series seriespxyfwd = new XYChart.Series();
+	XYChart.Series seriesryxfwd = new XYChart.Series();
+	XYChart.Series seriespyxfwd = new XYChart.Series();
 	
 	 final NumberAxis xrxyAxis = new NumberAxis();
 	 final NumberAxis xryxAxis = new NumberAxis();
@@ -61,6 +63,7 @@ public class MTApplication extends BorderPane {
      
 	LayerEntry layering = new LayerEntry(this);
 	TabPane tabpane= new TabPane();
+	private ArrayList<Double> freqs;
 	public MTApplication() {	
 		
 		xrxyAxis.setLabel(LOG_FREQ); 
@@ -180,12 +183,16 @@ public class MTApplication extends BorderPane {
 		tabpane.getSelectionModel().select(1); //open up data view
 		File f = new File(fileField.getText());
 		ArrayList<ArrayList<Double>> data = importData(f);
-	  
+		chartRxy.getData().remove(seriesrxy);
+	   	chartRyx.getData().remove(seriesryx);
+		 chartPhasexy.getData().remove(seriespxy);
+		 chartPhaseyx.getData().remove(seriespyx);
 	   	ArrayList<Double> freqs = getColumn(data,0);
 	   	ArrayList<Double> rhoxy = getColumn(data,1);
 	   	ArrayList<Double> phasexy = getColumn(data,2);
 	   	ArrayList<Double> rhoyx = getColumn(data,3);
 	   	ArrayList<Double> phaseyx = getColumn(data,4);		
+	   	this.freqs = freqs;
 	   	
 	   	for(int i = 0 ; i < freqs.size() ; i++) {
 	   		seriesrxy.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), Math.log10(rhoxy.get(i))));
@@ -193,10 +200,11 @@ public class MTApplication extends BorderPane {
 	   		seriespxy.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), (phasexy.get(i))));
 	   		seriespyx.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), (phaseyx.get(i))));
 	   	}
-	   	chartRxy.getData().add(seriesrxy);
+		chartRxy.getData().add(seriesrxy);
 	   	chartRyx.getData().add(seriesryx);
 		 chartPhasexy.getData().add(seriespxy);
 		 chartPhaseyx.getData().add(seriespyx);
+		
 	}
 	private ArrayList<Double> getColumn(ArrayList<ArrayList<Double>> data, int i) {
 		ArrayList<Double> column = new ArrayList<Double>();
@@ -239,6 +247,60 @@ public class MTApplication extends BorderPane {
 		});
 	   	return frequencies;
 	}
+	boolean fwdInit = false;
+	public void fwd() {
+		
+		if(!fwdInit) {
+		chartRxy.getData().remove(seriesrxyfwd);
+	   	chartRyx.getData().remove(seriesryxfwd);
+		 chartPhasexy.getData().remove(seriespxyfwd);
+		 chartPhaseyx.getData().remove(seriespyxfwd);
+		}
+		 seriesrxyfwd.getData().removeAll(seriesrxyfwd.getData());
+		 seriesryxfwd.getData().removeAll(seriesryxfwd.getData());
+		 seriespxyfwd.getData().removeAll(seriespxyfwd.getData());
+		 seriespyxfwd.getData().removeAll(seriespyxfwd.getData());
+		 ArrayList<ArrayList<Double>> layering = getLayering();
+		 ArrayList<Double> freqs = this.freqs;
+		 ArrayList<Double> res = getColumn(layering, 0);
+		 ArrayList<Double> thick = getColumn(layering, 1);
+		 double [] sig = new double [res.size()];
+		 double [] d = new double [res.size()-1];
+		 double [] w = new double [freqs.size()];
+		 for(int i = 0 ; i < res.size() ; i++) {
+			 sig[i] = 1/res.get(i);
+			 if(i != res.size() - 1) d[i] = thick.get(i);
+		 }
+		 for(int i = 0 ; i < freqs.size() ; i++) {
+			 w[i] = freqs.get(i) * 2 * Math.PI;
+		 }
+		 MTForward fwd = new MTForward(sig, d, w);	
+	     fwd.calcPaPhi();
+	     double[] phi = fwd.getPhi();
+	     double[] pa = fwd.getPa();
+
+//	        System.out.println("PA");
+	        for(int i=0; i<pa.length; ++i){
+		   		seriesrxyfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), Math.log10(pa[i])));
+		   		seriespxyfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), 360*(phi[i]/(2*Math.PI))));
+		   		seriesryxfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), 360*(phi[i]/(2*Math.PI))));
+		   		seriespyxfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), (phi[i])));
+		   	
+	       
+	        }
+
+//	        System.out.println("PHI");
+	        for(int i=0; i<phi.length; ++i){
+//	            System.out.println(phi[i]);
+	        }
+	        if(!fwdInit) {
+		chartRxy.getData().add(seriesrxyfwd);
+	   	chartRyx.getData().add(seriesryxfwd);
+		 chartPhasexy.getData().add(seriespxyfwd);
+		 chartPhaseyx.getData().add(seriespyxfwd);
+	        }
+	        fwdInit = true;
+	        }
 
 
 }

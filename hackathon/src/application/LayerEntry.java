@@ -48,7 +48,16 @@ public class LayerEntry extends BorderPane{
 
 			
 		});
+		Button forward = new Button("FORWARD COMPUTE");
+		setBottom(forward);
 		
+		forward.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				app.fwd();
+			}
+		});
 	}
 	
 	private void addNewLayer() {
