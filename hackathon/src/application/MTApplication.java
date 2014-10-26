@@ -54,7 +54,7 @@ public class MTApplication extends TabPane {
      public final static String LOG_RES = "Log Resistivity (Ohm m)";
      public final static String RAD = "Phase (rad)";
      
-		TextField fileField = new TextField("C:\\Projects\\Programming\\hackathon\\hackathon\\resources\\TestData");
+		TextField fileField = new TextField("resources\\TestData");
 		Button loadButton = new Button("Load Data");
      
 	
