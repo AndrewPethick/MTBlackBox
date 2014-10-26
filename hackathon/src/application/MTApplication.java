@@ -98,20 +98,47 @@ public class MTApplication extends BorderPane {
 
 	private Node createGravityModel() {
 
-		 final NumberAxis xAxis = new NumberAxis();
-		 final NumberAxis yAxis = new NumberAxis();
-		 xAxis.setLabel("Distance (m)"); 
-		 yAxis.setLabel("GAL (ms^-2)"); 
-		LineChart<Number,Number> chart = new LineChart<Number,Number>(xAxis,yAxis);
+		 final NumberAxis xAxis1 = new NumberAxis();
+		 final NumberAxis yAxis1 = new NumberAxis();
+		 xAxis1.setLabel("Distance (m)"); 
+		 yAxis1.setLabel("GAL (ms^-2)"); 
+		 final NumberAxis xAxis2 = new NumberAxis();
+		 final NumberAxis yAxis2 = new NumberAxis();
+		 xAxis2.setLabel("Distance (m)"); 
+		 yAxis2.setLabel("GAL (ms^-2)"); 
+		 final NumberAxis xAxis3 = new NumberAxis();
+		 final NumberAxis yAxis3 = new NumberAxis();
+		 xAxis3.setLabel("Distance (m)"); 
+		 yAxis3.setLabel("GAL (ms^-2)"); 
+		 final NumberAxis xAxis4 = new NumberAxis();
+		 final NumberAxis yAxis4 = new NumberAxis();
+		 xAxis4.setLabel("Distance (m)"); 
+		 yAxis4.setLabel("GAL (ms^-2)"); 
+		LineChart<Number,Number> chart1 = new LineChart<Number,Number>(xAxis1,yAxis1);
+		LineChart<Number,Number> chart2 = new LineChart<Number,Number>(xAxis2,yAxis2);
+		LineChart<Number,Number> chart3 = new LineChart<Number,Number>(xAxis3,yAxis3);
+		LineChart<Number,Number> chart4 = new LineChart<Number,Number>(xAxis4,yAxis4);
+		XYChart.Series seriesRaw = new XYChart.Series();
+		XYChart.Series seriesInv1 = new XYChart.Series();
+		XYChart.Series seriesInv2 = new XYChart.Series();
+		XYChart.Series seriesInv3 = new XYChart.Series();
 		
-		XYChart.Series series = new XYChart.Series();
-		
+		seriesRaw.setName("Raw");
+		seriesInv1.setName("Inv IRLSQ");
+		seriesInv2.setName("Inv LSQ");
+		seriesInv3.setName("Inv WLSQ");
 		for(ArrayList<Double> p : 	invGrav()) {
-			series.getData().add(new XYChart.Data<Number, Number>(p.get(1), p.get(0)));
+			seriesRaw.getData().add(new XYChart.Data<Number, Number>(p.get(0), new Double(p.get(1))));
+			seriesInv1.getData().add(new XYChart.Data<Number, Number>(p.get(0), new Double(p.get(2))));
+			seriesInv2.getData().add(new XYChart.Data<Number, Number>(p.get(0), new Double(p.get(3))));
+			seriesInv3.getData().add(new XYChart.Data<Number, Number>(p.get(0), new Double(p.get(4))));
 		}
-		chart.getData().add(series);
-		
-		return chart;
+		chart1.getData().add(seriesRaw);
+		chart2.getData().add(seriesInv1);
+		chart3.getData().add(seriesInv2);
+		chart4.getData().add(seriesInv3);
+		VBox b = new VBox(chart1, chart2, chart3,chart4);
+		return b;
 	}
 
 	private Node createWelcomePane() {
@@ -206,6 +233,12 @@ public class MTApplication extends BorderPane {
 	   	chartRyx.getData().remove(seriesryx);
 		 chartPhasexy.getData().remove(seriespxy);
 		 chartPhaseyx.getData().remove(seriespyx);
+		 
+		 seriesrxy.setName("Apparent Resistivity XY Data");
+		 seriesryx.setName("Phase XY Data");
+		 seriespxy.setName("Apparent Resistivity YX Data");
+		 seriespyx.setName("Phase YX Data");
+		 
 	   	ArrayList<Double> freqs = getColumn(data,0);
 	   	ArrayList<Double> rhoxy = getColumn(data,1);
 	   	ArrayList<Double> phasexy = getColumn(data,2);
@@ -272,11 +305,18 @@ public class MTApplication extends BorderPane {
 		inv.soln();
 		double [] gu = inv.getData().getArray();
 		double [] distances = inv.getPosition().getArray();
+		double [] inversionDIRLS = inv.getDIRLS().getArray();
+		double [] inversionLSQ = inv.getLSQ().getArray();
+		double [] inversionWLSQ = inv.getWLSQ().getArray();
 		ArrayList<ArrayList<Double>> values = new ArrayList<ArrayList<Double>>();
 		for(int i = 0 ; i < gu.length ; i++) {
 			ArrayList<Double> l = new ArrayList<Double>();
-			l.add(gu[i]);
+		
 			l.add(distances[i]);
+			l.add(gu[i]);
+			l.add(inversionDIRLS[i]);
+			l.add(inversionLSQ[i]);
+			l.add(inversionWLSQ[i]);
 			values.add(l);
 		}
 		return values;
@@ -289,6 +329,10 @@ public class MTApplication extends BorderPane {
 	   	chartRyx.getData().remove(seriesryxfwd);
 		 chartPhasexy.getData().remove(seriespxyfwd);
 		 chartPhaseyx.getData().remove(seriespyxfwd);
+		 seriesrxyfwd.setName("Apparent Resistivity XY Synthetic");
+		 seriespxyfwd.setName("Phase XY Synthetic");
+		 seriesryxfwd.setName("Apparent Resistivity YX Synthetic");
+		 seriespyxfwd.setName("Phase YX Synthetic");
 		}
 		 seriesrxyfwd.getData().removeAll(seriesrxyfwd.getData());
 		 seriesryxfwd.getData().removeAll(seriesryxfwd.getData());

@@ -84,7 +84,7 @@ public class LayerEntry extends BorderPane{
 		resB.getChildren().add(sr);
 		thickB.getChildren().add(l.t);
 		thickB.getChildren().add(st);
-		st.setValue(100);
+		
 		HBox b = new HBox(new Label("Res"),resB,new Label("Thick"),thickB,remove);
 		VBox v = new VBox();
 		v.getChildren().add(b);
