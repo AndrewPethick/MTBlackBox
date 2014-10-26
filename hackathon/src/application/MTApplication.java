@@ -15,6 +15,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -24,7 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import sun.rmi.runtime.Log;
 
-public class MTApplication extends TabPane {
+public class MTApplication extends BorderPane {
 
 	public final LineChart<Number,Number> chartRxy;
 	public final LineChart<Number,Number> chartPhasexy;
@@ -59,9 +60,9 @@ public class MTApplication extends TabPane {
 		Button loadButton = new Button("Load Data");
      
 	LayerEntry layering = new LayerEntry(this);
-		
+	TabPane tabpane= new TabPane();
 	public MTApplication() {	
-
+		
 		xrxyAxis.setLabel(LOG_FREQ); 
 		xryxAxis.setLabel(LOG_FREQ); 
 		xpxyAxis.setLabel(LOG_FREQ); 
@@ -77,15 +78,18 @@ public class MTApplication extends TabPane {
 		chartPhasexy = new LineChart<Number,Number>(xpxyAxis,yPhasexyAxis);
 		chartPhaseyx = new LineChart<Number,Number>(xpyxAxis,yPhaseyxAxis);
 		
+	
 
-		getTabs().add(createTab("WELCOME", createWelcomePane()));
-		getTabs().add(createTab("Load Data", createDataPane()));
-		getTabs().add(createTab("View Data", createViewPane()));
-		getTabs().add(createTab("Set Up Model", createModelPane()));
-		getTabs().add(createTab("Set up Inversion", createInversionSetupPane()));
-		getTabs().add(createTab("Invert", createInversionPane()));
+		tabpane.getTabs().add(createTab("WELCOME", createWelcomePane()));
+		tabpane.getTabs().add(createTab("Load Data", createDataPane()));
+//		p.getTabs().add(createTab("View Data", ));
+		tabpane.getTabs().add(createTab("Set Up Model", createModelPane()));
+		tabpane.getTabs().add(createTab("Set up Inversion", createInversionSetupPane()));
+		tabpane.getTabs().add(createTab("Invert", createInversionPane()));
 		
-		
+		setLeft(tabpane);
+		setCenter(createViewPane());
+//		setDividerPositions(0.5f);
 	}
 
 	private Node createWelcomePane() {
@@ -173,7 +177,7 @@ public class MTApplication extends TabPane {
 		return p;
 	}
 	private void loadData() {
-		getSelectionModel().select(1); //open up data view
+		tabpane.getSelectionModel().select(1); //open up data view
 		File f = new File(fileField.getText());
 		ArrayList<ArrayList<Double>> data = importData(f);
 	  

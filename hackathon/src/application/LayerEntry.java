@@ -30,8 +30,12 @@ public class LayerEntry extends BorderPane{
 	Button add = new Button("Add Layer");
 	private void setupLayerEntry() {
 		HBox b = new HBox();
-		b.getChildren().add(thickness);
+		b.getChildren().add(new Label("Res"));
+
+
 		b.getChildren().add(res);
+		b.getChildren().add(new Label("Thick"));
+		b.getChildren().add(thickness);
 		b.getChildren().add(add);
 		this.setTop(b);
 		add.setOnAction(new EventHandler<ActionEvent>() {
