@@ -78,7 +78,7 @@ public class MTApplication extends TabPane {
 		chartPhaseyx = new LineChart<Number,Number>(xpyxAxis,yPhaseyxAxis);
 		
 
-		 
+		getTabs().add(createTab("WELCOME", createWelcomePane()));
 		getTabs().add(createTab("Load Data", createDataPane()));
 		getTabs().add(createTab("View Data", createViewPane()));
 		getTabs().add(createTab("Set Up Model", createModelPane()));
@@ -86,6 +86,12 @@ public class MTApplication extends TabPane {
 		getTabs().add(createTab("Invert", createInversionPane()));
 		
 		
+	}
+
+	private Node createWelcomePane() {
+		BorderPane w = new BorderPane();
+		//PUT SOME AWESOME STUFF IN HERE!!!
+		return w;
 	}
 
 	private Node createInversionPane() {
