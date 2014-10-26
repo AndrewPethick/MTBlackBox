@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import edu.mines.jtk.lapack.DMatrix;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -87,12 +88,30 @@ public class MTApplication extends BorderPane {
 		tabpane.getTabs().add(createTab("Load Data", createDataPane()));
 //		p.getTabs().add(createTab("View Data", ));
 		tabpane.getTabs().add(createTab("Set Up Model", createModelPane()));
-		tabpane.getTabs().add(createTab("Set up Inversion", createInversionSetupPane()));
-		tabpane.getTabs().add(createTab("Invert", createInversionPane()));
+//		tabpane.getTabs().add(createTab("Set up Inversion", createInversionSetupPane()));
+		tabpane.getTabs().add(createTab("Gravity", createGravityModel()));
 		
 		setLeft(tabpane);
 		setCenter(createViewPane());
 //		setDividerPositions(0.5f);
+	}
+
+	private Node createGravityModel() {
+
+		 final NumberAxis xAxis = new NumberAxis();
+		 final NumberAxis yAxis = new NumberAxis();
+		 xAxis.setLabel("Distance (m)"); 
+		 yAxis.setLabel("GAL (ms^-2)"); 
+		LineChart<Number,Number> chart = new LineChart<Number,Number>(xAxis,yAxis);
+		
+		XYChart.Series series = new XYChart.Series();
+		
+		for(ArrayList<Double> p : 	invGrav()) {
+			series.getData().add(new XYChart.Data<Number, Number>(p.get(1), p.get(0)));
+		}
+		chart.getData().add(series);
+		
+		return chart;
 	}
 
 	private Node createWelcomePane() {
@@ -248,8 +267,23 @@ public class MTApplication extends BorderPane {
 	   	return frequencies;
 	}
 	boolean fwdInit = false;
+	public ArrayList<ArrayList<Double>> invGrav() {
+		GravityInverse inv = new GravityInverse();
+		inv.soln();
+		double [] gu = inv.getData().getArray();
+		double [] distances = inv.getPosition().getArray();
+		ArrayList<ArrayList<Double>> values = new ArrayList<ArrayList<Double>>();
+		for(int i = 0 ; i < gu.length ; i++) {
+			ArrayList<Double> l = new ArrayList<Double>();
+			l.add(gu[i]);
+			l.add(distances[i]);
+			values.add(l);
+		}
+		return values;
+	}
+	
 	public void fwd() {
-		
+	
 		if(!fwdInit) {
 		chartRxy.getData().remove(seriesrxyfwd);
 	   	chartRyx.getData().remove(seriesryxfwd);
@@ -283,8 +317,8 @@ public class MTApplication extends BorderPane {
 	        for(int i=0; i<pa.length; ++i){
 		   		seriesrxyfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), Math.log10(pa[i])));
 		   		seriespxyfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), 360*(phi[i]/(2*Math.PI))));
-		   		seriesryxfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), 360*(phi[i]/(2*Math.PI))));
-		   		seriespyxfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), (phi[i])));
+		   		seriesryxfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), Math.log10(pa[i])));
+		   		seriespyxfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), 360*(phi[i]/(2*Math.PI))));
 		   	
 	       
 	        }
