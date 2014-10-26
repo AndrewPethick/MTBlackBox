@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DisplayMessageActivity extends ActionBarActivity {
@@ -43,10 +44,15 @@ public class DisplayMessageActivity extends ActionBarActivity {
 	    TextView textView = new TextView(this);
 	    textView.setTextSize(40);
 	    textView.setText(data);
-
+	    String title = "Apparent Resistivity versus Frequency";
+		XYPlot p = new XYPlot(this, title );
+	    LinearLayout l = new LinearLayout(this);
+	    l.setOrientation(LinearLayout.VERTICAL);
+	    l.addView(textView);
+	    l.addView(p);
 	    
 	    // Set the text view as the activity layout
-	    setContentView(textView);
+	    setContentView(l);
 
 	}
 
@@ -80,8 +86,7 @@ public class DisplayMessageActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_display_message,
-					container, false);
+			View rootView = inflater.inflate(R.layout.fragment_display_message,		container, false);
 			return rootView;
 		}
 	}
