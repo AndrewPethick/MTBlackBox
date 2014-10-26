@@ -1,9 +1,13 @@
 package application;
 	
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 
 
 public class Main extends Application {
@@ -11,7 +15,19 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			BorderPane root = new BorderPane();
-			root.setCenter(new MTApplication());
+			BorderPane welcomePane = new BorderPane();
+			Button welcomeButton = new Button("",new WelcomeScreen());
+			welcomePane.setCenter(welcomeButton);
+			root.setCenter(welcomeButton);
+			welcomeButton.setOnAction(new EventHandler<ActionEvent>() {
+				
+				@Override
+				public void handle(ActionEvent event) {
+					root.setCenter(new MTApplication());
+				}
+			});
+			root.setStyle("-fx-background-color: #ffffff;");
+			welcomePane.setStyle("-fx-background-color: #5A1C8B;");
 			Scene scene = new Scene(root,1280,768);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);

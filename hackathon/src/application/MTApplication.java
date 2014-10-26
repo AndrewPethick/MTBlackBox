@@ -84,13 +84,13 @@ public class MTApplication extends BorderPane {
 		
 	
 
-		tabpane.getTabs().add(createTab("WELCOME", createWelcomePane()));
+//		tabpane.getTabs().add(createTab("WELCOME", createWelcomePane()));
 		tabpane.getTabs().add(createTab("Load Data", createDataPane()));
 //		p.getTabs().add(createTab("View Data", ));
 		tabpane.getTabs().add(createTab("Set Up Model", createModelPane()));
 //		tabpane.getTabs().add(createTab("Set up Inversion", createInversionSetupPane()));
 		tabpane.getTabs().add(createTab("Gravity", createGravityModel()));
-		
+		tabpane.setPrefWidth(700);
 		setLeft(tabpane);
 		setCenter(createViewPane());
 //		setDividerPositions(0.5f);
@@ -199,7 +199,7 @@ public class MTApplication extends BorderPane {
 		return p;
 	}
 	private void loadData() {
-		tabpane.getSelectionModel().select(1); //open up data view
+//		tabpane.getSelectionModel().select(1); //open up data view
 		File f = new File(fileField.getText());
 		ArrayList<ArrayList<Double>> data = importData(f);
 		chartRxy.getData().remove(seriesrxy);
