@@ -18,6 +18,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -57,7 +58,7 @@ public class MTApplication extends TabPane {
 		TextField fileField = new TextField("resources\\TestData");
 		Button loadButton = new Button("Load Data");
      
-	
+	LayerEntry layering = new LayerEntry(this);
 		
 	public MTApplication() {	
 
@@ -92,14 +93,46 @@ public class MTApplication extends TabPane {
 	}
 
 	private Node createInversionSetupPane() {
-		// TODO Auto-generated method stub
-		return null;
+		VBox b = new VBox();
+
+		Button button = new Button("print");
+		button.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println("PRINT");
+				for(ArrayList<Double> l : getLayering()) {
+					for (Double d : l) {
+						System.out.print(d + "\t");
+					}
+					System.out.println();
+				}
+				
+			}
+		});
+		b.getChildren().add(button);
+		return b;
 	}
 
 	private Node createModelPane() {
 		BorderPane b = new BorderPane();
-//		VBox
-		return null;
+		b.setCenter(layering);
+		return b;
+	}
+	
+	public ArrayList<ArrayList<Double>> getLayering() {
+		ArrayList<ArrayList<Double>> layering = new ArrayList<ArrayList<Double>>();
+
+		for(Layer l : this.layering.layering) {
+			ArrayList<Double> values = new ArrayList<Double>();
+			double res = Double.valueOf(l.r.getText());
+			double thick = Double.valueOf(l.t.getText());
+			values.add(res);
+			values.add(thick);
+			layering.add(values);
+		}
+		
+		return layering;
 	}
 
 	private Node createViewPane() {
