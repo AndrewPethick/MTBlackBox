@@ -89,9 +89,7 @@ public class MTApplication extends TabPane {
 	}
 
 	private Node createWelcomePane() {
-		BorderPane w = new BorderPane();
-		//PUT SOME AWESOME STUFF IN HERE!!!
-		return w;
+		return new WelcomeScreen();
 	}
 
 	private Node createInversionPane() {
