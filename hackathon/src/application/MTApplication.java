@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import edu.mines.jtk.lapack.DMatrix;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -15,14 +14,19 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
-public class MTApplication extends BorderPane {
+public class MTApplication extends SplitPane {
 
 	public final LineChart<Number,Number> chartRxy;
 	public final LineChart<Number,Number> chartPhasexy;
@@ -59,14 +63,15 @@ public class MTApplication extends BorderPane {
      public final static String LOG_RES = "Log Resistivity (Ohm m)";
      public final static String RAD = "Phase (rad)";
      
-		TextField fileField = new TextField("resources\\TestData");
-		Button loadButton = new Button("Load Data");
+	TextField fileField = new TextField("resources\\TestData.txt");
+	Button loadButton = new Button("Load Data");
      
 	LayerEntry layering = new LayerEntry(this);
 	TabPane tabpane= new TabPane();
 	private ArrayList<Double> freqs;
-	public MTApplication() {	
-		
+	private Stage stage;
+	public MTApplication(Stage s) {	
+		this.stage = s;
 		xrxyAxis.setLabel(LOG_FREQ); 
 		xryxAxis.setLabel(LOG_FREQ); 
 		xpxyAxis.setLabel(LOG_FREQ); 
@@ -91,8 +96,7 @@ public class MTApplication extends BorderPane {
 //		tabpane.getTabs().add(createTab("Set up Inversion", createInversionSetupPane()));
 		tabpane.getTabs().add(createTab("Gravity", createGravityModel()));
 		tabpane.setPrefWidth(700);
-		setLeft(tabpane);
-		setCenter(createViewPane());
+		getItems().addAll(tabpane,createViewPane());
 //		setDividerPositions(0.5f);
 	}
 
@@ -212,7 +216,11 @@ public class MTApplication extends BorderPane {
 
 		
 		BorderPane p = new BorderPane();
-		HBox b = new HBox(fileField,loadButton);
+		Image i = new Image(MTApplication.class.getResource("Folder.png").toExternalForm());
+
+		Button openButton = new Button("",new ImageView(i));
+	
+		HBox b = new HBox(fileField,openButton,loadButton);
 		p.setTop(b);
 		loadButton.setOnAction(new EventHandler<ActionEvent>() {
 			
@@ -222,6 +230,21 @@ public class MTApplication extends BorderPane {
 			}
 
 			
+		});
+		openButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				FileChooser c = new FileChooser();
+				FileChooser fileChooser = new FileChooser();
+		        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("MT Text File", "*.txt");
+		        fileChooser.getExtensionFilters().add(extFilter);
+		        File file = fileChooser.showSaveDialog(stage);
+		        
+		        if(file != null){
+		        	fileField.textProperty().set(file.getAbsolutePath());
+		        }
+			}
 		});
 		return p;
 	}

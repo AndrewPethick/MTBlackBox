@@ -17,15 +17,17 @@ public class Main extends Application {
 			BorderPane root = new BorderPane();
 			BorderPane welcomePane = new BorderPane();
 			Button welcomeButton = new Button("",new WelcomeScreen());
+
 			welcomePane.setCenter(welcomeButton);
 			root.setCenter(welcomeButton);
 			welcomeButton.setOnAction(new EventHandler<ActionEvent>() {
 				
 				@Override
 				public void handle(ActionEvent event) {
-					root.setCenter(new MTApplication());
+					root.setCenter(new MTApplication(primaryStage));
 				}
 			});
+			
 			root.setStyle("-fx-background-color: #ffffff;");
 			welcomePane.setStyle("-fx-background-color: #5A1C8B;");
 			Scene scene = new Scene(root,1280,768);
