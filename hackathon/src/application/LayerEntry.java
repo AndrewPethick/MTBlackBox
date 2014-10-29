@@ -97,6 +97,7 @@ public class LayerEntry extends SplitPane{
 		Slider sr = new Slider(-3, 3, 1);
 		Slider st = new Slider(1, 1000, 1);
 		st.setValue(t);
+		sr.setValue(r);
 		VBox resB = new VBox();
 		VBox thickB = new VBox();
 		resB.getChildren().add(l.r);

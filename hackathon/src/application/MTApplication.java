@@ -357,12 +357,14 @@ public class MTApplication extends SplitPane {
 		 seriesryxfwd.setName("Apparent Resistivity YX Synthetic");
 		 seriespyxfwd.setName("Phase YX Synthetic");
 		}
+//		if(seriespxyfwd.getData().size() == )
 		 seriesrxyfwd.getData().removeAll(seriesrxyfwd.getData());
 		 seriesryxfwd.getData().removeAll(seriesryxfwd.getData());
 		 seriespxyfwd.getData().removeAll(seriespxyfwd.getData());
 		 seriespyxfwd.getData().removeAll(seriespyxfwd.getData());
 		 ArrayList<ArrayList<Double>> layering = getLayering();
 		 ArrayList<Double> freqs = this.freqs;
+		 if(freqs == null) freqs = getDefaultFrequencies();
 		 ArrayList<Double> res = getColumn(layering, 0);
 		 ArrayList<Double> thick = getColumn(layering, 1);
 		 double [] sig = new double [res.size()];
@@ -386,8 +388,6 @@ public class MTApplication extends SplitPane {
 		   		seriespxyfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), 360*(phi[i]/(2*Math.PI))));
 		   		seriesryxfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), Math.log10(pa[i])));
 		   		seriespyxfwd.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), 360*(phi[i]/(2*Math.PI))));
-		   	
-	       
 	        }
 
 //	        System.out.println("PHI");
@@ -402,6 +402,17 @@ public class MTApplication extends SplitPane {
 	        }
 	        fwdInit = true;
 	        }
+
+	private ArrayList<Double> getDefaultFrequencies() {
+		double minLogFreq = -3;
+		double maxLogFreq = 3;
+		double df = 0.1;
+		ArrayList<Double> frequencies = new ArrayList<Double>();
+		for(double f = minLogFreq ; f < maxLogFreq ; f += df) {
+			frequencies.add(Math.pow(10, f));
+		}
+		return frequencies;
+	}
 
 
 }

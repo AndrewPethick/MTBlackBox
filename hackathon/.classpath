@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/arpack-java.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/edu_mines_jtk.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt-natives-linux-amd64.jar"/>
@@ -16,5 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jythonlib.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/netlib-java.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
