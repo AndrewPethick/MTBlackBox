@@ -239,7 +239,9 @@ public class MTApplication extends SplitPane {
 				FileChooser fileChooser = new FileChooser();
 		        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("MT Text File", "*.txt");
 		        fileChooser.getExtensionFilters().add(extFilter);
-		        File file = fileChooser.showSaveDialog(stage);
+		        fileChooser.setInitialDirectory(new File("./resources/"));
+		        
+		        File file = fileChooser.showOpenDialog(stage);
 		        
 		        if(file != null){
 		        	fileField.textProperty().set(file.getAbsolutePath());
@@ -257,6 +259,12 @@ public class MTApplication extends SplitPane {
 		 chartPhasexy.getData().remove(seriespxy);
 		 chartPhaseyx.getData().remove(seriespyx);
 		 
+
+		seriesrxy = new XYChart.Series();
+		seriespxy = new XYChart.Series();
+		 seriesryx = new XYChart.Series();
+		seriespyx = new XYChart.Series();
+		
 		 seriesrxy.setName("Apparent Resistivity XY Data");
 		 seriesryx.setName("Phase XY Data");
 		 seriespxy.setName("Apparent Resistivity YX Data");
