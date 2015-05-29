@@ -37,7 +37,7 @@ public class Main extends Application {
 			primaryStage.show();
 			primaryStage.setTitle("eMTeeBlackBox Developed by " + " Josh Poirier" +" Colton Kohnke" + " Katerina Gonzales" + " Elijah Thomas" + " Andrew Pethick 2014");
 		} catch(Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(); 
 		}
 	}
 	
