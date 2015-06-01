@@ -73,7 +73,7 @@ public class MTApplication extends SplitPane {
 		chartPhases = new LineChart<Number, Number>(xAxisPhases, yAxisPhases);
 
 		// tabpane.getTabs().add(createTab("WELCOME", createWelcomePane()));
-		tabpane.getTabs().add(createTab("Load Data", createDataPane(),"72_DATA_NET"));
+		tabpane.getTabs().add(createTab("Data", createDataPane(),"72_DATA_NET"));
 		// p.getTabs().add(createTab("View Data", ));
 		tabpane.getTabs().add(createTab("Geo-Electrical Model", createModelPane(),"72_EARTH1D"));
 		// tabpane.getTabs().add(createTab("Set up Inversion",

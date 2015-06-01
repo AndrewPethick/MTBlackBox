@@ -181,6 +181,7 @@ public class LayerEntry extends SplitPane{
 	}
 
 	public void updateAll() {
+		if(layering.size() == 0) addNewLayer(); //stops modelling null earths
 		app.fwd();
 		updateGraph();
 	}
