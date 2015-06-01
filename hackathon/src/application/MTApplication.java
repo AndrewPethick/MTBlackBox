@@ -9,6 +9,7 @@ import java.util.Comparator;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -21,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -55,7 +55,8 @@ public class MTApplication extends SplitPane {
 
 	TextField fileField = new TextField("resources\\TestData.txt");
 	Button loadButton = new Button("Load Data");
-
+	Button clearButton = new Button("Clear Data");
+	
 	LayerEntry layering = new LayerEntry(this);
 	TabPane tabpane = new TabPane();
 	private ArrayList<Double> freqs;
@@ -72,9 +73,9 @@ public class MTApplication extends SplitPane {
 		chartPhases = new LineChart<Number, Number>(xAxisPhases, yAxisPhases);
 
 		// tabpane.getTabs().add(createTab("WELCOME", createWelcomePane()));
-		tabpane.getTabs().add(createTab("Load Data", createDataPane()));
+		tabpane.getTabs().add(createTab("Load Data", createDataPane(),"72_DATA_NET"));
 		// p.getTabs().add(createTab("View Data", ));
-		tabpane.getTabs().add(createTab("Set Up Model", createModelPane()));
+		tabpane.getTabs().add(createTab("Geo-Electrical Model", createModelPane(),"72_EARTH1D"));
 		// tabpane.getTabs().add(createTab("Set up Inversion",
 		// createInversionSetupPane()));
 		// tabpane.getTabs().add(createTab("Gravity", createGravityModel()));
@@ -137,22 +138,19 @@ public class MTApplication extends SplitPane {
 	}
 
 	private Node createViewPane() {
-		GridPane p = new GridPane();
-		p.add(chartResistivities, 1, 1);
-		p.add(chartPhases, 1, 2);
-//		VBox b = new VBox();
-//		b.getChildren().add();
-//		b.getChildren().add(chartPhases);
-//		b.setMaxHeight(Double.MAX_VALUE);
-//		BorderPane p = new BorderPane(b);
-//		p.setMaxHeight(Double.MAX_VALUE);
-		return p;
+		SplitPane vs = new SplitPane();
+		vs.setOrientation(Orientation.VERTICAL);
+		vs.getItems().add(chartResistivities);
+		vs.getItems().add(chartPhases);
+
+		return vs;
 	}
 
-	private Tab createTab(String string, Node content) {
+	private Tab createTab(String string, Node content, String icon) {
 		Tab t = new Tab(string);
 		t.setContent(content);
 		t.setClosable(false);
+		t.setGraphic(Icons.createIcon(icon + ".png", 40));
 		return t;
 	}
 
@@ -163,9 +161,10 @@ public class MTApplication extends SplitPane {
 				.toExternalForm());
 
 		Button openButton = new Button("", new ImageView(i));
-
+		
 		HBox b = new HBox(fileField, openButton, loadButton);
-		p.setTop(b);
+		VBox vb = new VBox(b,clearButton);
+		p.setTop(vb);
 		loadButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -173,6 +172,15 @@ public class MTApplication extends SplitPane {
 				loadData();
 			}
 
+		});
+		clearButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				clearData();
+			}
+
+		
 		});
 		openButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -193,7 +201,14 @@ public class MTApplication extends SplitPane {
 		});
 		return p;
 	}
+	private void clearData() {
+		chartResistivities.getData().remove(seriesrxy);
+		chartResistivities.getData().remove(seriesryx);
+		chartPhases.getData().remove(seriespxy);
+		chartPhases.getData().remove(seriespyx);
+		layering.updateAll();
 
+	}
 	private void loadData() {
 		// tabpane.getSelectionModel().select(1); //open up data view
 		File f = new File(fileField.getText());
@@ -230,7 +245,7 @@ public class MTApplication extends SplitPane {
 		chartResistivities.getData().add(seriesryx);
 		chartPhases.getData().add(seriespxy);
 		chartPhases.getData().add(seriespyx);
-
+		layering.updateAll();
 	}
 
 	private ArrayList<Double> getColumn(ArrayList<ArrayList<Double>> data, int i) {
