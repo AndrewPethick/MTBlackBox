@@ -231,7 +231,7 @@ public class LayerEntry extends SplitPane{
 		series.setName("Geo-electrical Resistivity");
 		chart.setTitle("Geo-electrical Model");
 		xAxis.setLabel("Log10 Resistivity (Ohm m)");
-		yAxis.setLabel("Depth (m)");
+		yAxis.setLabel("Elevation (m)");
 		chart.setAnimated(false);
 		
 	}

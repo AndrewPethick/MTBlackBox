@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="c:\GeoWiz">
+<anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="C:\Builds\eEMTeeBlackBox_6.5.21_v1">
   <deploy height="800" width="1280" packagingFormat="all">
     <application name="hackathon" mainclass="application.Main" version="6.5.21" toolkit="fx"/>
     <info title="eEMTeeBlackBox" vendor="GeophysWiz"/>

@@ -51,7 +51,7 @@ public class MTApplication extends SplitPane {
 
 	public final static String LOG_FREQ = "Log Frequency";
 	public final static String LOG_RES = "Log Resistivity (Ohm m)";
-	public final static String RAD = "Phase (rad)";
+	public final static String RAD = "Phase (degrees)";
 
 	TextField fileField = new TextField("resources\\TestData.txt");
 	Button loadButton = new Button("Load Data");
