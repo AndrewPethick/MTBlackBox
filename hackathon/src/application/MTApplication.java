@@ -357,7 +357,13 @@ public class MTApplication extends BorderPane {
 				FileChooser fileChooser = new FileChooser();
 				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("MT Text File", "*.txt");
 				fileChooser.getExtensionFilters().add(extFilter);
-				fileChooser.setInitialDirectory(new File("./resources/"));
+				if(!new File("./resources/").exists()) {
+					fileChooser.setInitialDirectory(new File("./"));	
+				} else{
+					fileChooser.setInitialDirectory(new File("./resources/"));
+				}
+					
+				
 
 				File file = fileChooser.showOpenDialog(stage);
 
