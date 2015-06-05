@@ -1,15 +1,27 @@
 package application;
 
 
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Date;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -19,9 +31,14 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+
+import javax.imageio.ImageIO;
 
 
 
@@ -109,34 +126,7 @@ public class LayerEntry extends SplitPane{
 		VBox v = new VBox();
 		v.getChildren().add(b);
 		layeringView.getChildren().add(v);
-		
-		
-		
-//		HBox sliders = new HBox();
-//		sliders.getChildren().add(new Label("Res"));
-//		sliders.getChildren().add(new Label("Thick"));
-//		sliders.getChildren().add(sr);
-//		sliders.getChildren().add(st);
-//		v.getChildren().add(sliders);
 
-//		l.r.textProperty().addListener(new ChangeListener<String>() {
-//
-//			@Override
-//			public void changed(ObservableValue<? extends String> observable,
-//					String oldValue, String newValue) {
-//				double res = Double.valueOf(newValue);
-//				sr.setValue(res);
-//			}
-//		});
-//		l.t.textProperty().addListener(new ChangeListener<String>() {
-//
-//			@Override
-//			public void changed(ObservableValue<? extends String> observable,
-//					String oldValue, String newValue) {
-//				double thick = Double.valueOf(newValue);
-//				st.setValue(thick);
-//			}
-//		});
 		add.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -234,5 +224,127 @@ public class LayerEntry extends SplitPane{
 		yAxis.setLabel("Elevation (m)");
 		chart.setAnimated(false);
 		
+	}
+
+	public void save() {
+		FileChooser c = new FileChooser();
+		String title = "Save Earth File";
+		c.setTitle(title);
+		String path = "./";
+		if (path != null) {
+			c.setInitialDirectory(new File(path));
+		}
+		c.getExtensionFilters().add(new ExtensionFilter("Earth Output", new ArrayList<String>(Arrays.asList("*.earth"))));
+			
+		File l = c.showSaveDialog(null);
+		if(l == null) {
+			
+		} else {
+			if(!l.getPath().toLowerCase().endsWith(".earth")) {
+				l = new File(l.getPath() + ".earth");
+			}
+			if(l.exists()) {
+				l.delete();
+			}
+			try {
+				
+				BufferedWriter out = new BufferedWriter(new FileWriter(l));
+				out.write("depth,resistivity,thickness");
+				out.newLine();
+				double depth = 0;
+				for(Layer layer : layering) {
+					out.write(depth + "," + layer.r.getText() + "," + layer.t.getText());
+					out.newLine();
+					depth -= Double.valueOf(layer.t.getText());
+				}
+				out.close();
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
+	public void load() {
+		FileChooser c = new FileChooser();
+		String title = "Load Earth File";
+		c.setTitle(title);
+		String path = "./";
+		if (path != null) {
+			c.setInitialDirectory(new File(path));
+		}
+		c.getExtensionFilters().add(new ExtensionFilter("Earth Output", new ArrayList<String>(Arrays.asList("*.earth"))));
+			
+		File l = c.showOpenDialog(null);
+		layering.clear();
+		
+		if(l == null) {
+			
+		} else {
+			if(l.exists()) {
+				while(layeringView.getChildren().size() > 1) {
+					//remove All layers
+					layeringView.getChildren().remove(1);			
+				}
+				try {
+					BufferedReader in = new BufferedReader(new FileReader(l));
+					String line = "";
+					in.readLine(); //skip header
+					while((line = in.readLine()) != null) {
+						String [] split = line.split(",");
+						String depth = split[0];
+						String res = split[1];
+						String thick = split[2];
+						this.res.setText(res);
+						this.thickness.setText(thick);
+						addNewLayer();
+					}
+					updateAll();
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}	
+			}
+			
+			
+		}
+	}
+	public static String getCompactDate() {
+		Date date = new Date();
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+		return dateFormat.format(date);
+	}
+	public void exportPNG() {
+		 WritableImage image = chart.snapshot(new SnapshotParameters(), null);
+
+		    File file = new File("earth_"+getCompactDate()+".png");
+
+		    try {
+		        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+		        Desktop.getDesktop().open(file);  
+		    } catch (IOException e) {
+		       e.printStackTrace();		       
+		    }
+	}
+	public void exportCSV() {
+	
+		    File file = new File("earth_"+getCompactDate()+".csv");
+
+		    try {
+				
+				BufferedWriter out = new BufferedWriter(new FileWriter(file));
+				double depth = 0;
+				out.write("depth,resistivity,thickness");
+				out.newLine();
+				for(Layer layer : layering) {
+					out.write(depth + "," + layer.r.getText() + "," + layer.t.getText());
+					out.newLine();
+					depth -= Double.valueOf(layer.t.getText());
+				}
+				out.close();
+				Desktop.getDesktop().open(file);  
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 }

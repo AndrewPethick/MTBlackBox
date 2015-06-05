@@ -29,6 +29,8 @@ public class Main extends Application {
 				}
 			});
 			
+			
+			
 			root.setStyle("-fx-background-color: #ffffff;");
 			welcomePane.setStyle("-fx-background-color: #5A1C8B;");
 			Scene scene = new Scene(root,1280,768);

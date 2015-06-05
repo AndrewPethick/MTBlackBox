@@ -1,33 +1,45 @@
 package application;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.imageio.ImageIO;
+
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class MTApplication extends SplitPane {
+public class MTApplication extends BorderPane {
 
 	public final LineChart<Number, Number> chartResistivities;
 	public final LineChart<Number, Number> chartPhases;
@@ -61,7 +73,7 @@ public class MTApplication extends SplitPane {
 	TabPane tabpane = new TabPane();
 	private ArrayList<Double> freqs;
 	private Stage stage;
-
+	SplitPane sp = new SplitPane();
 	public MTApplication(Stage s) {
 		this.stage = s;
 		xAxisResistivities.setLabel(LOG_FREQ);
@@ -80,8 +92,163 @@ public class MTApplication extends SplitPane {
 		// createInversionSetupPane()));
 		// tabpane.getTabs().add(createTab("Gravity", createGravityModel()));
 		tabpane.setPrefWidth(700);
-		getItems().addAll(tabpane, createViewPane());
+		
+		sp.getItems().addAll(tabpane, createViewPane());
+		this.setCenter(sp);
+		this.setTop(getMenuBar());
+	}
 
+
+
+	private Node getMenuBar() {
+		MenuBar b = new MenuBar();
+		Menu file = new Menu("File");
+		Menu save = new Menu("Save");
+		MenuItem saveEarth = new MenuItem("Save Earth");
+		Menu load = new Menu("Load");
+		MenuItem loadEarth = new MenuItem("Load Earth");
+		
+		b.getMenus().add(file);
+		file.getItems().add(save);
+		file.getItems().add(load);
+		save.getItems().add(saveEarth);
+		load.getItems().add(loadEarth);
+		
+		Menu export = new Menu("Export");
+		MenuItem exportDataCSV = new MenuItem("Export Data (CSV)");
+		MenuItem exportDataPNG = new MenuItem("Export Data (PNG)");
+		MenuItem exportEarthCSV = new MenuItem("Export Earth (CSV)");
+		MenuItem exportEarthPNG = new MenuItem("Export Earth (PNG)");
+		b.getMenus().add(export);
+		export.getItems().add(exportDataCSV);
+		export.getItems().add(exportDataPNG);
+		export.getItems().add(exportEarthCSV);
+		export.getItems().add(exportEarthPNG);
+		initLoadEarth(loadEarth);
+		initSaveEarth(saveEarth);
+		initExportDataCSV(exportDataCSV);
+		initExportDataPNG(exportDataPNG);
+		initExportEarthCSV(exportEarthCSV);
+		initExportEarthPNG(exportEarthPNG);
+		return b;
+	}
+
+
+	private void initExportEarthPNG(MenuItem exportEarthPNG) {
+		exportEarthPNG.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				layering.exportPNG();
+			}
+		});
+	}
+
+
+
+	private void initExportEarthCSV(MenuItem exportEarthCSV) {
+		exportEarthCSV.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				layering.exportCSV();
+			}
+		});
+	}
+
+
+
+	private void initExportDataPNG(MenuItem exportDataPNG) {
+		exportDataPNG.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				SplitPane p = ((SplitPane) sp.getItems().get(1));
+				WritableImage image = p.snapshot(new SnapshotParameters(), null);
+
+			    File file = new File("data_"+LayerEntry.getCompactDate()+".png");
+
+			    try {
+			        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+			        Desktop.getDesktop().open(file);  
+			    } catch (IOException e) {
+			       e.printStackTrace();		       
+			    }
+			}
+		});
+	}
+
+
+
+	private void initExportDataCSV(MenuItem exportDataCSV) {
+		exportDataCSV.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				  File file = new File("data"+LayerEntry.getCompactDate()+".csv");
+
+				    try {
+						
+						BufferedWriter out = new BufferedWriter(new FileWriter(file));
+						double depth = 0;
+						out.write("Frequency,Rho_xy,phi_xy,rho_yx,phi_yx,RhoSynth,PhiSynth");
+						out.newLine();
+						layering.updateAll();
+//						XYChart.Series seriesrxy = new XYChart.Series();
+//						XYChart.Series seriesryx = new XYChart.Series();
+//						XYChart.Series seriespxy = new XYChart.Series();
+//						XYChart.Series seriespyx = new XYChart.Series();
+//
+//						XYChart.Series seriesResistivitiesfwd = new XYChart.Series();
+//						XYChart.Series seriesPhasesfwd = new XYChart.Series();
+//						seriesrxy.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), Math.log10(rhoxy.get(i))));
+//						seriesryx.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), Math.log10(rhoyx.get(i))));
+//						seriespxy.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), (phasexy.get(i))));
+//						seriespyx.getData().add(new XYChart.Data(Math.log10(freqs.get(i)), (phaseyx.get(i))));
+						int N = seriesrxy.getData().size();
+						for(int i = 0 ; i < N ; i++) {
+							String freq = "" + Math.pow(10,(Double) (((XYChart.Data) seriesrxy.getData().get(i)).getXValue()));
+							String rxys = "" + Math.pow(10,(Double) (((XYChart.Data) seriesrxy.getData().get(i)).getYValue()));
+							String ryxs = "" + Math.pow(10,(Double) (((XYChart.Data) seriesryx.getData().get(i)).getYValue()));
+							String pxys = "" + (Double) (((XYChart.Data) seriespxy.getData().get(i)).getYValue());
+							String pyxs = "" + (Double) (((XYChart.Data) seriespyx.getData().get(i)).getYValue());
+							String af = (seriesResistivitiesfwd.getData().size() == 0) ? "-" : "" + (Math.pow(10,(Double) (((XYChart.Data) seriesResistivitiesfwd.getData().get(i)).getYValue())));
+							String pf = (seriesPhasesfwd.getData().size() == 0) ? "-" : "" + (Double) (((XYChart.Data) seriesPhasesfwd.getData().get(i)).getYValue());
+							out.write(freq + "," + rxys + "," + ryxs + "," + pxys + "," + pyxs + "," + af + "," + pf);
+							out.newLine();
+						}
+						
+						
+						out.close();
+						Desktop.getDesktop().open(file);  
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				
+				
+			}
+		});
+	}
+
+
+
+	private void initLoadEarth(MenuItem loadEarth) {
+		loadEarth.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				layering.load();
+			}
+		});
+	}
+	private void initSaveEarth(MenuItem saveEarth) {
+		saveEarth.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				layering.save();
+			}
+		});
 	}
 
 
